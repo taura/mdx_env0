@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# usage : ensure_line <line>+ <file>
+# for example : ensure_line "abc" "def" "ghi" hoge.txt
+# description : if <file> does not include each <line>, the <line> is added to the <file>
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <line>+ <file>" > /dev/stderr
+    exit 1
+fi
+
+eval file=\$\{$(expr $#)\}
+tmpfile="/tmp/ensure_line_$$"
+
+if ! [ -f $file ]; then
+    echo "No such file: $file" > /dev/stderr
+    exit 1
+fi
+
+cp -p $file $tmpfile
+for i in $(seq 1 $(expr $# - 1)); do
+    if ! grep -xFq "$1" $tmpfile > /dev/null; then
+        echo "$1" >> $tmpfile
+    fi
+    shift
+done
+cp -p $tmpfile $file
+unlink $tmpfile

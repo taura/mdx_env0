@@ -1,0 +1,6 @@
+dn: cn=%GROUP%,%host_dc%
+objectClass: top
+objectClass: posixGroup
+cn: %GROUP%
+gidNumber: %GID%
+structuralObjectClass: posixGroup

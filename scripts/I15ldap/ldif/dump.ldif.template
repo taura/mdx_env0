@@ -1,0 +1,27 @@
+dn: %host_dc%
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: %host_only%
+dc: %host_only%
+structuralObjectClass: organization
+
+dn: cn=admin,%host_dc%
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword:: e1NTSEF9ZjNRdVA3TEhvN0Z2REFKNXk4Y2RvLzc0TVd5SVVUMGg=
+structuralObjectClass: organizationalRole
+
+dn: ou=people,%host_dc%
+objectClass: organizationalUnit
+ou: people
+structuralObjectClass: organizationalUnit
+
+dn: ou=groups,%host_dc%
+objectClass: organizationalUnit
+ou: people
+ou: groups
+structuralObjectClass: organizationalUnit
+

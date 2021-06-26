@@ -1,0 +1,14 @@
+dn: uid=%USER%,ou=people,%host_dc%
+uid: %USER%
+objectClass: top
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: inetOrgPerson
+cn: %USER%
+sn: %USER%
+uidNumber: %UID%
+gidNumber: %GID%
+homeDirectory: %HOME%
+loginShell: /bin/bash
+structuralObjectClass: inetOrgPerson
+userPassword: %SHA_PASSWORD%

@@ -1,0 +1,6 @@
+dn: cn=%GROUP%,ou=groups,dc=taulec,dc=zapto,dc=org
+objectClass: top
+objectClass: posixGroup
+cn: %GROUP%
+gidNumber: %GID%
+structuralObjectClass: posixGroup

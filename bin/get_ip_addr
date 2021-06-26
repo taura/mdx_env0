@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# inet6 240f:3a:fb95:1:5b1c:2e89:3be0:f6e4/64 scope global temporary dynamic
+# --> 240f:3a:fb95:1:5b1c:2e89:3be0:f6e4
+ip -6 a | awk '/scope global/ {print substr($2, 0, index($2, "/") - 1); exit}'

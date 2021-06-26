@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# usage : ensure_noline <line>+ <file>
+# for example : ensure_noline "abc" "def" "ghi" hoge.txt
+# description : if <file> includes each <line>, the <line> is removed from the <file>
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <line>+ <file>" > /dev/stderr
+    exit 1
+fi
+
+eval file=\$\{$(expr $#)\}
+tmpfile="/tmp/ensure_noline_$$_1"
+tmpfile2="/tmp/ensure_noline_$$_2"
+
+if ! [ -f $file ]; then
+    echo "No such file: $file" > /dev/stderr
+    exit 1
+fi
+
+cp -p $file $tmpfile
+cp -p $tmpfile $tmpfile2
+for i in $(seq 1 $(expr $# - 1)); do
+    grep -xFv "$1" $tmpfile > $tmpfile2
+    cp -p $tmpfile2 $tmpfile
+    shift
+done
+cp -p $tmpfile $file
+unlink $tmpfile
+unlink $tmpfile2
