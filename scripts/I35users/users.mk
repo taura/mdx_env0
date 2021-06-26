@@ -7,7 +7,7 @@ users_     := $(shell sqlite3 $(db) 'select user from users')
 users := $(patsubst %,made/%,$(users_))
 slapadd:=slapadd
 
-ifeq ($(node_id),)
+ifeq ($(node_id),0)
   targets := make_users
 else
   targets := 
