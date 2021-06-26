@@ -26,7 +26,7 @@ ldif/user_template.ldif : ldif/user_template.ldif.template
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/user_template.ldif.template > ldif/user_template.ldif
 
 make_users : $(users)
-	touch $@
+	cat $(users) > $@
 
 $(users) : user=$(notdir $@)
 $(users) : uid=$(shell    sqlite3 $(db) 'select uid  from users where user="$(user)"')
@@ -44,10 +44,8 @@ $(users) : sha_pwd=$(shell echo $(db_sha_pwd) | grep . || slappasswd -s $(pwd))
 $(users) : % : ldif/group_template.ldif ldif/user_template.ldif made/created /usr/bin/pwgen
 	slapcat -a '(&(cn=$(grp))(objectClass=posixGroup))' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g ldif/group_template.ldif | $(slapadd)
 	slapcat -a 'uid=$(user)' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g -e s/%USER%/$(user)/g -e s/%UID%/$(uid)/g -e s:%HOME%:$(home):g -e s:%SHA_PASSWORD%:$(sha_pwd):g ldif/user_template.ldif | $(slapadd)
-	mkdir -p $(home)
-	chmod 0$(mod) $(home)
-	./add_pubkey.sh $(home) "$(pubkey)"
-	chown -R $(uid):$(gid) $(home)
+	if ! test -d $(home) ; then mkdir -p $(home) -m 0$(mod) ; chown $(uid):$(gid) $(home) ; fi
+	./add_pubkey.sh $(home) $(uid) $(gid) "$(pubkey)"
 	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd),$(pubkey)" > $@
 
 /usr/bin/pwgen :
