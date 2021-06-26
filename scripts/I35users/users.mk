@@ -8,7 +8,7 @@ users := $(patsubst %,made/%,$(users_))
 slapadd:=slapadd
 
 ifeq ($(node_id),0)
-  targets := make_users
+  targets := made_users.csv
 else
   targets := 
 endif
@@ -25,7 +25,7 @@ ldif/group_template.ldif : ldif/group_template.ldif.template
 ldif/user_template.ldif : ldif/user_template.ldif.template
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/user_template.ldif.template > ldif/user_template.ldif
 
-make_users : $(users)
+made_users.csv : $(users)
 	cat $(users) > $@
 
 $(users) : user=$(notdir $@)
