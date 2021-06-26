@@ -10,5 +10,5 @@ ifneq ($(hostname),)
 	hostname $(hostname)
 	echo $(hostname) > /etc/hostname
 else
-$(warning host of address $(addr) not in the database $(db))
+$(error host of address $(addr) not in the database $(db))
 endif

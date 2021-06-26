@@ -26,7 +26,7 @@ db := $(db_dir)/hosts_users.sqlite
 
 ifneq ($(wildcard $(db)),)
 ip_addr := $(shell $(bin_dir)/get_ip_addr)
-hostname := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(addr)\" and idx = 0 limit 1")
-hostnames := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(addr)\"")
-node_id := $(shell sqlite3 $(db) "select node_id from hosts where ip_addr=\"$(addr)\" limit 1")
+hostname := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(ip_addr)\" and idx = 0 limit 1")
+hostnames := $(shell sqlite3 $(db) "select hostname from hosts where ip_addr=\"$(ip_addr)\"")
+node_id := $(shell sqlite3 $(db) "select node_id from hosts where ip_addr=\"$(ip_addr)\" limit 1")
 endif

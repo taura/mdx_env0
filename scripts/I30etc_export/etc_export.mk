@@ -7,7 +7,7 @@ ifeq ($(node_id),0)
 else
   targets:=
 endif
-clients:=$(shell sqlite3 $(db) "select ip_addr from hosts")
+clients:=$(shell sqlite3 $(db) "select distinct ip_addr from hosts")
 
 OK : $(targets)
 
