@@ -19,10 +19,10 @@ host_fqdn := $(shell sqlite3 $(db) "select hostname from hosts where node_id=0 a
 host_dc := $(shell python3 -c "print(','.join([ 'dc=%s' % x for x in '$(host_fqdn)'.split('.') ]))")
 host_only := $(shell python3 -c "print('$(host_fqdn)'.split('.')[0])")
 
-ldif/group_template.ldif : ldif/group_template.ldif.template $(db)
+ldif/group_template.ldif : ldif/group_template.ldif.template
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/group_template.ldif.template > ldif/group_template.ldif
 
-ldif/user_template.ldif : ldif/user_template.ldif.template $(db)
+ldif/user_template.ldif : ldif/user_template.ldif.template
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/user_template.ldif.template > ldif/user_template.ldif
 
 made_users.csv : $(users)
