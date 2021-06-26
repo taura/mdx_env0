@@ -5,7 +5,7 @@ include ../common.mk
 
 OK : /etc/hostname
 
-/etc/hostname :
+/etc/hostname : $(db)
 ifneq ($(hostname),)
 	hostname $(hostname)
 	echo $(hostname) > /etc/hostname
