@@ -46,9 +46,9 @@ $(users) : % : ldif/group_template.ldif ldif/user_template.ldif made/created /us
 	slapcat -a 'uid=$(user)' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g -e s/%USER%/$(user)/g -e s/%UID%/$(uid)/g -e s:%HOME%:$(home):g -e s:%SHA_PASSWORD%:$(sha_pwd):g ldif/user_template.ldif | $(slapadd)
 	mkdir -p $(home)
 	chmod 0$(mod) $(home)
-	chown $(uid):$(gid) $(home)
 	./add_pubkey.sh $(home) "$(pubkey)"
-	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd)" > $@
+	chown -R $(uid):$(gid) $(home)
+	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd),$(pubkey)" > $@
 
 /usr/bin/pwgen :
 	$(aptinst) pwgen

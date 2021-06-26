@@ -21,7 +21,7 @@ ensure_line := $(bin_dir)/ensure_line
 # key-value merge
 kv_merge := $(bin_dir)/kv_merge
 
-db_dir := $(this_dir)../../hosts_users
+db_dir := $(this_dir)../..
 db := $(db_dir)/hosts_users.sqlite
 
 ifneq ($(wildcard $(db)),)
