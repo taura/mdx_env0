@@ -15,10 +15,10 @@ host_fqdn := $(shell sqlite3 $(db) "select hostname from hosts where node_id=0 a
 host_dc := $(shell python3 -c "print(','.join([ 'dc=%s' % x for x in '$(host_fqdn)'.split('.') ]))")
 host_only := $(shell python3 -c "print('$(host_fqdn)'.split('.')[0])")
 
-ldif/config.ldif : ldif/config.ldif.template
+ldif/config.ldif : ldif/config.ldif.template $(db)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/config.ldif.template > ldif/config.ldif
 
-ldif/dump.ldif : ldif/dump.ldif.template
+ldif/dump.ldif : ldif/dump.ldif.template $(db)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" ldif/dump.ldif.template > ldif/dump.ldif
 
 ldap_server : ldif/config.ldif ldif/dump.ldif
@@ -35,10 +35,10 @@ ldap_server : ldif/config.ldif ldif/dump.ldif
 	service slapd start
 	touch $@
 
-conf/ldap.conf : conf/ldap.conf.template
+conf/ldap.conf : conf/ldap.conf.template $(db)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" conf/ldap.conf.template > conf/ldap.conf
 
-conf/nslcd.conf : conf/nslcd.conf.template
+conf/nslcd.conf : conf/nslcd.conf.template $(db)
 	sed -e "s/%host_fqdn%/$(host_fqdn)/g" -e "s/%host_dc%/$(host_dc)/g" -e "s/%host_only%/$(host_only)/g" conf/nslcd.conf.template > conf/nslcd.conf
 
 ldap_client : /etc/nsswitch.conf conf/ldap.conf conf/nslcd.conf
