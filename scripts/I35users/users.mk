@@ -35,16 +35,20 @@ $(users) : gid=$(shell    sqlite3 $(db) 'select gid  from users where user="$(us
 $(users) : home=$(shell   sqlite3 $(db) 'select home from users where user="$(user)"')
 $(users) : mod=$(shell    sqlite3 $(db) 'select mod  from users where user="$(user)"')
 $(users) : db_pwd=$(shell sqlite3 $(db) 'select pwd  from users where user="$(user)"')
-$(users) : gen_pwd=$(shell pwgen 8 1)
-$(users) : pwd=$(shell if test -z "$(db_pwd)" ; then echo $(gen_pwd); else echo $(db_pwd); fi)
-$(users) : sha_pwd=$(shell slappasswd -s $(pwd))
+$(users) : db_sha_pwd=$(shell sqlite3 $(db) 'select sha_pwd  from users where user="$(user)"')
+$(users) : pubkey=$(shell sqlite3 $(db) 'select pubkey from users where user="$(user)"')
+# if sha_pwd given in db, leave pwd empty; if db_pwd is given, use it, otherwise generate one
+$(users) : pwd=$(shell if test -n "$(db_sha_pwd)" ; then echo "" ; else echo "$(db_pwd)" | grep . || pwgen 8 1; fi)
+# if sha_pwd given in db, use it; otherwise sha plain pwd
+$(users) : sha_pwd=$(shell echo $(db_sha_pwd) | grep . || slappasswd -s $(pwd))
 $(users) : % : ldif/group_template.ldif ldif/user_template.ldif made/created /usr/bin/pwgen
 	slapcat -a '(&(cn=$(grp))(objectClass=posixGroup))' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g ldif/group_template.ldif | $(slapadd)
 	slapcat -a 'uid=$(user)' | grep dn: || sed -e s/%GROUP%/$(grp)/g -e s/%GID%/$(gid)/g -e s/%USER%/$(user)/g -e s/%UID%/$(uid)/g -e s:%HOME%:$(home):g -e s:%SHA_PASSWORD%:$(sha_pwd):g ldif/user_template.ldif | $(slapadd)
 	mkdir -p $(home)
 	chmod 0$(mod) $(home)
 	chown $(uid):$(gid) $(home)
-	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd)" > $@
+	./add_pubkey.sh $(home) "$(pubkey)"
+	echo "$(user),$(uid),$(grp),$(gid),$(home),$(mod),$(pwd),$(sha_pwd)" > $@
 
 /usr/bin/pwgen :
 	$(aptinst) pwgen
